@@ -1,4 +1,6 @@
 const contactService = require('./contactService')
+const appController = require('./app')
+
 
 //const contactInputValidations = require('./contactInputValidations')
 
@@ -32,27 +34,25 @@ function actionsMenu() {
         //let phoneNumber = process.argv[5]
         console.log("action " + action)
         action = process.argv[2]
+        const input = [process.argv[2], process.argv[3], process.argv[4], process.argv[5]]
+
         switch (action.toLowerCase()) {
             case ("add"):
-                //let name = process.argv[3]
-                //let email = process.argv[4]
-                //let phoneNumber = process.argv[5]
-                const contact = { name: process.argv[3], email: process.argv[4], phoneNumber: process.argv[5] }
-                console.log("name:" + contact.name + "email: " + contact.email + "" + contact.phoneNumber)
-                contactService.addContact(email, phoneNumber)
+
+                return input
                 break;
 
             case ("delete"):
-                email = process.argv[3]
-                contactService.deleteContact(email)
+                //email = process.argv[3]
+                return input
                 break;
 
             case ("list"): {
-                contactService.loadContacts()
+                return input
                 break;
             }
             case ("search"): {
-                contactService.searchContact()
+                return input
                 break;
             }
             case ("help"):
@@ -60,14 +60,22 @@ function actionsMenu() {
                 action = 'exit'
                 break;
             default:
-                action = 'exit'
                 break;
 
         }
     }
 }
 
-actionsMenu()
+printMessage = (msg) => {
+    console.log(msg)
+
+}
+
+
+
+
+
+//actionsMenu()
 
 module.exports = {
     actionsMenu
