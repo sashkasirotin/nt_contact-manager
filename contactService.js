@@ -28,44 +28,44 @@ const loadContacts = (fileName, callback) => {
   });
 };
 
-const saveContacts = (fileName, contacts) => {
+const saveContacts = (fileName, contacts, callback) => {
   //recieves the filename and a contacts object to push it into the file.
-  fs.writeFile(fileName, JSON.stringify(contacts));
+  const data = JSON.stringify(contacts, null, 2);
+  fs.writeFile(fileName, data, (err) => {
+    if (callback) {
+      callback(err);
+    }
+  });
   //ui prints out save message
-  console.log(`Contacts saved to ${fileName}`);
+  //   console.log(`Contacts saved to ${fileName}`);
 };
 
-const addContact = (contacts, name, email, phone) => {
-  if (isNaN(name)) {
-    return "Error: Name must only contain letters";
-  }
-  if (!email.includes("@")) {
-    return "Error: Email must contain @ symbol";
-  }
-  if (phone.length < 12) {
-    return "Error: Phone number must contain 10 digits separated by dashes";
-  } else if (isNaN(phone)) {
-    return "Error: Phone number must be a number";
-  }
-  contacts.push({ name, email, phone });
+const addContact = (contacts, contactObj) => {
+  //   ui checks input:
+  //   if (!isNaN(name)) {
+  //     return "Error: Name must only contain letters";
+  //   }
+  //   if (!email.includes("@")) {
+  //     return "Error: Email must contain @ symbol";
+  //   }
+  //   if (phone.length < 12) {
+  //     return "Error: Phone number must contain 10 digits separated by dashes";
+  //   } else if (isNaN(phone)) {
+  //     return "Error: Phone number must be a number";
+  //   }
+
+  contacts.push({ name: contactObj.name, email: contactObj.email, phone: contactObj.phone });
   //ui prints out contact saved to file
+  return contacts;
 };
 
 const deleteContact = (contacts, email) => {
-  for (let contactIdx in contacts) {
-    if (contacts[contactIdx].email === email) {
-      contacts.splice(contactIdx, 1);
-    } //else return false???
-  }
+  return contacts.filter((contact) => contact.email !== email);
 };
 
 const searchContact = (contacts, searchStr) => {
-  for (let contact of contacts) {
-    if (contact.name.includes(searchStr) || contact.email.includes(searchStr)) {
-      return contact;
-    }
-  }
-  //return false???
+  const normalizedStr = searchStr.toLowerCase();
+  return contacts.filter((contact) => contact.name.toLowerCase() === normalizedStr || contact.email.toLowerCase() === normalizedStr);
 };
 
 const contactList = (contacts) => {
