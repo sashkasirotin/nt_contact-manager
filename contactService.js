@@ -29,21 +29,27 @@ const saveContacts = (fileName, contacts, callback) => {
 };
 
 const addContactToList = (contacts, contactObj) => {
+  if (contacts.some((contact) => contact.email === contactObj.email)) {
+    return false;
+  }
   contacts.push({ name: contactObj.name, email: contactObj.email, phone: contactObj.phone });
   return contacts;
 };
 
 const deleteContactFromList = (contacts, email) => {
-  const deletedName = contacts.find((contact) => contact.email === email).name;
-  console.log(deletedName + " deleted Name");
-  const newArray = contacts.filter((contact) => contact.email !== email);
-  console.log("new Array: " + newArray);
-  return { newArray, deletedName };
+  if (contacts.some((contact) => contact.email === email)) {
+    const deletedName = contacts.find((contact) => contact.email === email).name;
+    const newArray = contacts.filter((contact) => contact.email !== email);
+    return { newArray, deletedName };
+  } else {
+    return false;
+  }
 };
 
 const searchContactInList = (contacts, searchStr) => {
+  if (!Array.isArray(contacts) || !searchStr) return false;
   const normalizedStr = searchStr.toLowerCase();
-  return contacts.filter((contact) => contact.name.toLowerCase() === normalizedStr || contact.email.toLowerCase() === normalizedStr);
+  return contacts.filter((contact) => contact.name.toLowerCase().includes(normalizedStr) || contact.email.toLowerCase().includes(normalizedStr));
 };
 
 module.exports = {

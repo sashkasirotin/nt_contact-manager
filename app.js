@@ -1,60 +1,80 @@
-const { printMessage, actionsMenu, help } = require("./contactUi");
+const { printMessage, actionsMenu, printHelp, printContacts } = require("./contactUi");
 const { loadContacts, saveContacts, addContactToList, deleteContactFromList, searchContactInList } = require("./contactService");
 
 const FILE = "contacts.json";
-let contactList = null;
-//get user input for fileName and action
-//UI sends an array with user input [0] = choice, [1] = contact name, [2] = contact email, [3] = phone
-//depending on user input --->
 
-const addContact = (name, email, phone) => {
+const handleContacts = (contactsLoadedFunction, { save = false } = {}) => {
   printMessage(`Loading contacts from ${FILE}`);
+
   loadContacts(FILE, (err, contacts) => {
     if (err) {
       printMessage(err.message);
       return;
     }
 
-    contactList = contacts;
-    printMessage(`Loaded ${contactList.length} contacts`);
-    if (!contactList.some((contact) => contact.email == email)) {
-      addContactToList(contacts, { name, email, phone });
-      printMessage(`Contact added: ${name}`);
-      saveContacts(FILE, contacts, (err) => {
-        if (err) {
-          printMessage(err.message);
-          return;
-        }
+    printMessage(`Loaded ${contacts.length} contacts`);
+
+    const result = contactsLoadedFunction(contacts);
+
+    if (Array.isArray(result)) {
+      contacts = result;
+    }
+
+    if (save && result) {
+      saveContacts(FILE, result, () => {
+        printMessage(`Contacts saved to ${FILE}`);
       });
-      printMessage(`Contacts saved to ${FILE}`);
+    }
+  });
+};
+
+const addContact = (name, email, phone) => {
+  handleContacts(
+    (contacts) => {
+      const updatedContacts = addContactToList(contacts, { name, email, phone });
+      if (!updatedContacts) {
+        printMessage("Contact already exists");
+        return;
+      }
+
+      printMessage(`Contact added: ${name}`);
+      return updatedContacts;
+    },
+    { save: true },
+  );
+};
+
+const searchContact = (searchStr) => {
+  handleContacts((contacts) => {
+    contacts = searchContactInList(contacts, searchStr);
+    if (contacts) {
+      printMessage(`=== Search Results for "${searchStr}" ===`);
+      printContacts(contacts);
     } else {
-      printMessage(`Contact already exists in ${FILE}`);
+      printMessage(`Nothing to show.`);
     }
   });
 };
 
 const deleteContact = (email) => {
-  printMessage(`Loading contacts from ${FILE}`);
-  loadContacts(FILE, (err, contacts) => {
-    if (err) {
-      printMessage(err.message);
-      return;
-    }
-
-    contactList = contacts;
-    printMessage(`Loaded ${contactList.length} contacts`);
-
-    // deleteContactFromList(contacts, email);
-    let postDeleteInfo = deleteContactFromList(contactList, email);
-    contactList = postDeleteInfo.newArray;
-    printMessage(`Contact deleted ${postDeleteInfo.deletedName}`);
-    saveContacts(FILE, contactList, (err) => {
-      if (err) {
-        printMessage(err.message);
+  handleContacts(
+    (contacts) => {
+      let postDeleteInfo = deleteContactFromList(contacts, email);
+      if (!postDeleteInfo) {
+        printMessage(`Error: No contact found with email: ${email}`);
         return;
       }
-    });
-    printMessage(`Contacts saved to ${FILE}`);
+      printMessage(`Contact deleted ${postDeleteInfo.deletedName}`);
+      return postDeleteInfo.newArray;
+    },
+    { save: true },
+  );
+};
+
+const showList = () => {
+  handleContacts((contacts) => {
+    printMessage(`=== All Contacts ===`);
+    printContacts(contacts);
   });
 };
 
@@ -65,13 +85,18 @@ const run = () => {
     case "add":
       addContact(input[1], input[2], input[3]);
       break;
+    case "list":
+      showList();
+      break;
+    case "search":
+      searchContact(input[1]);
+      break;
     case "delete":
       deleteContact(input[1]);
       break;
     case "help":
-      help();
+      printHelp();
       break;
-
     default:
       printMessage(`Error, unknown command '${input[0]}'`);
       break;
