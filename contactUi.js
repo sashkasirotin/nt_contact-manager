@@ -1,5 +1,6 @@
 const contactService = require('./contactService')
 const appController = require('./app')
+const vlidator = require('./contactInputValidations')
 
 
 //const contactInputValidations = require('./contactInputValidations')
@@ -38,27 +39,22 @@ function actionsMenu() {
 
         switch (action.toLowerCase()) {
             case ("add"):
-
-                return input
-                break;
-
+                if (vlidator.validateEmailAndPhone(process.argv[3], process.argv[4])) {
+                    return input
+                }
             case ("delete"):
-                //email = process.argv[3]
                 return input
-                break;
 
             case ("list"): {
                 return input
-                break;
             }
             case ("search"): {
                 return input
-                break;
+
             }
             case ("help"):
                 return input
-                action = 'exit'
-                break;
+            // action = 'exit'
             default:
                 break;
 
@@ -70,10 +66,9 @@ const printMessage = (msg) => {
     console.log(msg)
 
 }
-const printContact = (contactList) => {
-    console.log("")
+const printContacts = (contactList) => {
     contactList.array.forEach(element => {
-        console.log(element)
+        console.log(`${element.index + 1} + "." + ${element}`)
 
     });
 }
@@ -85,6 +80,6 @@ const printContact = (contactList) => {
 //actionsMenu()
 
 module.exports = {
-    actionsMenu, printMessage, help, printContact
+    actionsMenu, printMessage, help, printContacts
 };
 
