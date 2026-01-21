@@ -1,4 +1,17 @@
 [
-  { "name": "Bob", "email": "bob@whatever.com", "phone": "123-456-7890" },
-  { "name": "David", "email": "david@whatever.com", "phone": "098-765-4321" }
+  {
+    "name": "Bob",
+    "email": "bob@whatever.com",
+    "phone": "123-456-7890"
+  },
+  {
+    "name": "David",
+    "email": "david@whatever.com",
+    "phone": "098-765-4321"
+  },
+  {
+    "name": "John Doe",
+    "email": "john@example.com",
+    "phone": "555-123-4567"
+  }
 ]
