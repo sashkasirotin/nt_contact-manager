@@ -35,7 +35,9 @@ const addContactToList = (contacts, contactObj) => {
 
 const deleteContactFromList = (contacts, email) => {
   const deletedName = contacts.find((contact) => contact.email === email).name;
+  console.log(deletedName + " deleted Name");
   const newArray = contacts.filter((contact) => contact.email !== email);
+  console.log("new Array: " + newArray);
   return { newArray, deletedName };
 };
 
