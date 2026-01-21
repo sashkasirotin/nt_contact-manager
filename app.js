@@ -1,4 +1,4 @@
-const { printMessage, actionsMenu } = require("./contactUi");
+const { printMessage, actionsMenu, help } = require("./contactUi");
 const { loadContacts, saveContacts, addContactToList, deleteContactFromList, searchContactInList } = require("./contactService");
 
 const FILE = "contacts.json";
@@ -67,6 +67,9 @@ const run = () => {
       break;
     case "delete":
       deleteContact(input[1]);
+      break;
+    case "help":
+      help();
       break;
 
     default:
